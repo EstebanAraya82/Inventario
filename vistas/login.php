@@ -13,14 +13,14 @@
 		<div class="field">
 		  	<label class="label">Clave</label>
 			<div class="control">
-		  	 	<input class="input is-success" type="password" name="login_clave" placeholder="Ingrese clave" pattern="[a-zA-Z0-9$@.-]{7,100}" maxlength="100" required >
+		  	 	<input class="input is-success" type="password" name="login_clave" placeholder="Ingrese clave" pattern="[a-zA-Z0-9$@.-*]{7,100}" maxlength="100" required >
 				</div>
 		</div>
 		
 		<label class="checkbox">
  		 <input type="checkbox">
 		  Recuerdame
-	</label>
+		</label>
 
 		<p class="has-text-centered mb-4 mt-3">
 			<button type="submit" class="button is-small is-info is-hovered">Iniciar sesion</button>
