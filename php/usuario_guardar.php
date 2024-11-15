@@ -2,12 +2,12 @@
     require_once "main.php";
 
     /* Almacenando datos */
-    $nombre=limpiar_cadena($_POST['nombre_usuario']);
-    $apellido=limpiar_cadena($_POST['apellido_usuario']);
+    $nombre=limpiar_cadena($_POST['usuario_nombre']);
+    $apellido=limpiar_cadena($_POST['usuario_apellido']);
     $usuario=limpiar_cadena($_POST['usuario_usuario']);
-    $clave_1=limpiar_cadena($_POST['clave_usuario_1']);
-    $clave_2=limpiar_cadena($_POST['clave_usuario_2']);
-    $estado=limpiar_cadena($_POST['estado_usuario']);
+    $clave_1=limpiar_cadena($_POST['usuario_clave_1']);
+    $clave_2=limpiar_cadena($_POST['usuario_clave_2']);
+    $estado=limpiar_cadena($_POST['usuario_estado']);
     $rol=limpiar_cadena($_POST['usuario_rol']);
     
 
@@ -94,7 +94,7 @@
      if($clave_1!=$clave_2){
         echo '
             <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
+                <strong>¡Lo sentimos, ocurrio un error inesperado!</strong><br>
                 Las contraseñas que ha ingresado no coinciden
             </div>
         ';
@@ -103,10 +103,23 @@
         $clave=password_hash($clave_1,PASSWORD_BCRYPT,["cost"=>10]);
     }
 
+    /* verificando rol */
+    $check_rol=conexion();
+    $check_rol=$check_rol->query("SELECT rol_id FROM rol WHERE rol_id='$rol'");
+    if($check_rol->rowCount()<=0){
+        echo'
+        <div class="notification is-danger is-light">
+        <strong>¡Lo sentimos, ocurrio un error inesperado!</strong><br>
+                El rol que ha ingresado no existe
+            </div>
+        ';
+        exit();
+    }
+
     /* Guardando datos */
     $guardar_usuario=conexion();
-    $guardar_usuario=$guardar_usuario->prepare("INSERT INTO usuario(nombre_usuario,apellido_usuario,usuario_usuario,
-    clave_usuario,estado_usuario,id_rol) VALUES(:nombre,:apellido,:usuario,:clave,:estado,:rol)");
+    $guardar_usuario=$guardar_usuario->prepare("INSERT INTO usuario(usuario_nombre,usuario_apellido,usuario_usuario,
+    usuario_clave,usuario_estado,rol_id) VALUES(:nombre,:apellido,:usuario,:clave,:estado,:rol)");
 
     $marcadores=[
         ":nombre"=>$nombre,
@@ -129,7 +142,7 @@
     }else{
         echo '
             <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
+                <strong>¡Lo sentimos, ocurrio un error inesperado!</strong><br>
                 No se pudo registrar el usuario, por favor intente nuevamente
             </div>
         ';

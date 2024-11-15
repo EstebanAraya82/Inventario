@@ -9,6 +9,7 @@
 
 	/* Verificar datos */
 	function verificar_datos($filtro,$cadena){
+		$filtro=preg_quote($filtro, '/');
 		if(preg_match("/^".$filtro."$/", $cadena)){
 			return false;
         }else{

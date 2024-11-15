@@ -27,7 +27,7 @@
         exit();
     }
 
-    if(verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$clave)){
+    if(verificar_datos("[a-zA-Z0-9$@.-*]{7,100}",$clave)){
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Lo sentimos, ocurrio un error inesperado!</strong><br>
@@ -38,16 +38,19 @@
     }
 
     $check_user=conexion();
-    $check_user=$check_user->query("SELECT * FROM usuario WHERE usuario_usuario='$usuario'");
+    $stmt = $check_user->prepare("SELECT * FROM usuario WHERE usuario_usuario = :usuario");
+    $stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+    $stmt->execute();
+    
     if($check_user->rowCount()==1){
 
     	$check_user=$check_user->fetch();
 
-    	if($check_user['usuario_usuario']==$usuario && password_verify($clave, $check_user['clave_usuario'])){
+    	if($check_user['usuario_usuario']==$usuario && password_verify($clave, $check_user['usuario_clave'])){
 
-    		$_SESSION['id']=$check_user['id_usuario'];
-    		$_SESSION['nombre']=$check_user['nombre_usuario'];
-    		$_SESSION['apellido']=$check_user['apellido_usuario'];
+    		$_SESSION['id']=$check_user['usuario_id'];
+    		$_SESSION['nombre']=$check_user['usuario_nombre'];
+    		$_SESSION['apellido']=$check_user['usuario_apellido'];
     		$_SESSION['usuario']=$check_user['usuario_usuario'];
 
     		if(headers_sent()){

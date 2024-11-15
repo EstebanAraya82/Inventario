@@ -1,14 +1,14 @@
 <?php
-	/* require_once "../inc/inicio_de_sesion.php"; */
+	/* require_once "../inc/inicio_sesion.php"; */
 
 	require_once "main.php";
 
     /* Almacenamiento id */
-    $id=limpiar_cadena($_POST['id_usuario']);
+    $id=limpiar_cadena($_POST['usuario_id']);
 
     /* Verificación usuario */
 	$check_usuario=conexion();
-	$check_usuario=$check_usuario->query("SELECT * FROM usuario WHERE id_usuario='$id'");
+	$check_usuario=$check_usuario->query("SELECT * FROM usuario WHERE usuario_id='$id'");
 
     if($check_usuario->rowCount()<=0){
     	echo '
@@ -25,13 +25,13 @@
 
 
     /* Almacenando datos del administrador */
-    $usuario_admin=limpiar_cadena($_POST['usuario_administrador']);
-    $clave_admin=limpiar_cadena($_POST['clave_administrador']);
+    $admin_usuario=limpiar_cadena($_POST['administrador_usuario']);
+    $admin_clave=limpiar_cadena($_POST['administrador_clave']);
 
 
 
     /* Verificando campos obligatorios del administrador */
-    if($usuario_admin=="" || $clave_admin==""){
+    if($admin_usuario=="" || $admin_clave==""){
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -42,7 +42,7 @@
     }
 
     /* Verificando integridad de los datos (admin) */
-    if(verificar_datos("[a-zA-Z0-9@.]{4,100}",$usuario_admin)){
+    if(verificar_datos("[a-zA-Z0-9@.]{4,100}",$admin_usuario)){
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -52,7 +52,7 @@
         exit();
     }
 
-    if(verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$clave_admin)){
+    if(verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$admin_clave)){
         echo '
             <div class="notification is-danger is-light">
                 <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -65,12 +65,12 @@
 
     /* Verificando el administrador en BD */
     $check_admin=conexion();
-    $check_admin=$check_admin->query("SELECT usuario_usuario,clave_usuario FROM usuario WHERE usuario_usuario='$usuario_admin' AND id_usuario='".$_SESSION['id']."'");
+    $check_admin=$check_admin->query("SELECT usuario_usuario, usuario_clave FROM usuario WHERE usuario_usuario='$admin_usuario' AND usuario_id='".$_SESSION['id']."'");
    
     if($check_admin->rowCount()==1){
     	$check_admin=$check_admin->fetch();
 
-    	if($check_admin['usuario_usuario']!=$usuario_admin || !password_verify($clave_admin, $check_admin['clave_usuario'])){
+    	if($check_admin['usuario_usuario']!=$admin_usuario || !password_verify($admin_clave, $check_admin['usuario_clave'])){
     		echo '
 	            <div class="notification is-danger is-light">
 	                <strong>¡Ocurrio un error inesperado!</strong><br>
@@ -93,12 +93,12 @@
 
 
     /* Almacenando datos del usuario */
-    $nombre=limpiar_cadena($_POST['nombre_usuario']);
-    $apellido=limpiar_cadena($_POST['apellido_usuario']);
+    $nombre=limpiar_cadena($_POST['usuario_nombre']);
+    $apellido=limpiar_cadena($_POST['usuario_apellido']);
     $usuario=limpiar_cadena($_POST['usuario_usuario']);
-    $clave_1=limpiar_cadena($_POST['clave_usuario_1']);
-    $clave_2=limpiar_cadena($_POST['clave_usuario_2']);
-    $estado=limpiar_cadena($_POST['estado_usuario_2']);
+    $clave_1=limpiar_cadena($_POST['usuario_clave_1']);
+    $clave_2=limpiar_cadena($_POST['usuario_clave_2']);
+    $estado=limpiar_cadena($_POST['usuario_estado']);
     $rol=limpiar_cadena($_POST['rol_usuario'])
 
 
@@ -186,20 +186,21 @@
 		    }
 	    }
     }else{
-    	$clave=$datos['clave_usuario'];
+    	$clave=$datos['usuario_clave'];
     }
 
 
     /* Actualizar datos */
     $actualizar_usuario=conexion();
-    $actualizar_usuario=$actualizar_usuario->prepare("UPDATE usuario SET nombre_usuario=:nombre,apellido_usuario=:apellido,
-    usuario_usuario=:usuario,clave_usuario=:clave WHERE id_usuario=:id");
+    $actualizar_usuario=$actualizar_usuario->prepare("UPDATE usuario SET usuario_nombre=:nombre,usuario_apellido=:apellido,
+    usuario_usuario=:usuario,usuario_clave=:clave,usuario_rol=:rol WHERE usuario_id=:id");
 
     $marcadores=[
         ":nombre"=>$nombre,
         ":apellido"=>$apellido,
         ":usuario"=>$usuario,
         ":clave"=>$clave,
+        ":rol"=>$rol,
         ":id"=>$id
     ];
 
