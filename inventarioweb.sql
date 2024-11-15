@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-11-2024 a las 00:38:03
+-- Tiempo de generación: 16-11-2024 a las 00:28:20
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -30,13 +30,15 @@ USE `inventarioweb`;
 --
 
 CREATE TABLE `activo` (
-  `id_activo` int(11) NOT NULL,
-  `marca_activo` varchar(50) NOT NULL,
-  `modelo_activo` varchar(50) NOT NULL,
-  `serial_activo` varchar(50) NOT NULL,
-  `id_categoria` int(11) NOT NULL,
-  `id_sector` int(11) NOT NULL,
-  `id_area` int(11) NOT NULL
+  `activo_id` int(11) NOT NULL,
+  `activo_codigo` varchar(20) NOT NULL,
+  `activo_marca` varchar(50) NOT NULL,
+  `activo_modelo` varchar(50) NOT NULL,
+  `activo_serial` varchar(50) NOT NULL,
+  `categoria_id` int(11) NOT NULL,
+  `piso_id` int(11) NOT NULL,
+  `posicion_id` int(11) NOT NULL,
+  `area_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -46,9 +48,9 @@ CREATE TABLE `activo` (
 --
 
 CREATE TABLE `area` (
-  `id_area` int(11) NOT NULL,
-  `nombre_area` varchar(50) NOT NULL,
-  `id_usuario` int(11) NOT NULL
+  `area_id` int(11) NOT NULL,
+  `area_nombre` varchar(50) NOT NULL,
+  `usuario_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -58,8 +60,31 @@ CREATE TABLE `area` (
 --
 
 CREATE TABLE `categoria` (
-  `id_categoria` int(11) NOT NULL,
-  `nombre_categoria` varchar(50) NOT NULL
+  `categoria_id` int(11) NOT NULL,
+  `categoria_nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `piso`
+--
+
+CREATE TABLE `piso` (
+  `piso_id` int(11) NOT NULL,
+  `piso_numero` varchar(10) NOT NULL,
+  `posicion_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `posicion`
+--
+
+CREATE TABLE `posicion` (
+  `posicion_id` int(11) NOT NULL,
+  `posicion_posicion` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -69,30 +94,17 @@ CREATE TABLE `categoria` (
 --
 
 CREATE TABLE `rol` (
-  `id_rol` int(11) NOT NULL,
-  `nombre_rol` varchar(50) NOT NULL
+  `rol_id` int(11) NOT NULL,
+  `rol_nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `rol`
 --
 
-INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
+INSERT INTO `rol` (`rol_id`, `rol_nombre`) VALUES
 (1, 'Administrador'),
 (2, 'Finanzas');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `sector`
---
-
-CREATE TABLE `sector` (
-  `id_sector` int(11) NOT NULL,
-  `piso_sector` varchar(10) NOT NULL,
-  `ptored_sector` varchar(20) NOT NULL,
-  `campana_sector` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -101,14 +113,21 @@ CREATE TABLE `sector` (
 --
 
 CREATE TABLE `usuario` (
-  `id_usuario` int(11) NOT NULL,
-  `nombre_usuario` varchar(50) NOT NULL,
-  `apellido_usuario` varchar(50) NOT NULL,
-  `usuario_usuario` varchar(50) NOT NULL,
-  `clave_usuario` varchar(50) NOT NULL,
-  `estado_usuario` varchar(20) NOT NULL,
-  `id_rol` int(11) NOT NULL
+  `usuario_id` int(11) NOT NULL,
+  `usuario_nombre` varchar(100) NOT NULL,
+  `usuario_apellido` varchar(100) NOT NULL,
+  `usuario_usuario` varchar(100) NOT NULL,
+  `usuario_clave` varchar(100) NOT NULL,
+  `usuario_estado` varchar(20) NOT NULL,
+  `rol_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`usuario_id`, `usuario_nombre`, `usuario_apellido`, `usuario_usuario`, `usuario_clave`, `usuario_estado`, `rol_id`) VALUES
+(4, 'Esteban', 'Araya', 'earaya', '$2y$10$ptt8ojZZ5RiPgdLMToZmA.4fiq.9wKTWezni1DQTmC6', 'Habilitado', 1);
 
 --
 -- Índices para tablas volcadas
@@ -118,43 +137,51 @@ CREATE TABLE `usuario` (
 -- Indices de la tabla `activo`
 --
 ALTER TABLE `activo`
-  ADD PRIMARY KEY (`id_activo`),
-  ADD KEY `id_categoria` (`id_categoria`),
-  ADD KEY `id_sector` (`id_sector`),
-  ADD KEY `id_area` (`id_area`);
+  ADD PRIMARY KEY (`activo_id`),
+  ADD KEY `id_categoria` (`categoria_id`),
+  ADD KEY `id_sector` (`piso_id`),
+  ADD KEY `id_area` (`area_id`),
+  ADD KEY `posicion_id` (`posicion_id`);
 
 --
 -- Indices de la tabla `area`
 --
 ALTER TABLE `area`
-  ADD PRIMARY KEY (`id_area`),
-  ADD KEY `id_usuario` (`id_usuario`);
+  ADD PRIMARY KEY (`area_id`),
+  ADD KEY `id_usuario` (`usuario_id`);
 
 --
 -- Indices de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  ADD PRIMARY KEY (`id_categoria`);
+  ADD PRIMARY KEY (`categoria_id`);
+
+--
+-- Indices de la tabla `piso`
+--
+ALTER TABLE `piso`
+  ADD PRIMARY KEY (`piso_id`),
+  ADD KEY `posicion_id` (`posicion_id`);
+
+--
+-- Indices de la tabla `posicion`
+--
+ALTER TABLE `posicion`
+  ADD PRIMARY KEY (`posicion_id`);
 
 --
 -- Indices de la tabla `rol`
 --
 ALTER TABLE `rol`
-  ADD PRIMARY KEY (`id_rol`);
-
---
--- Indices de la tabla `sector`
---
-ALTER TABLE `sector`
-  ADD PRIMARY KEY (`id_sector`);
+  ADD PRIMARY KEY (`rol_id`);
 
 --
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`id_usuario`),
-  ADD KEY `id_rol` (`id_rol`),
-  ADD KEY `id_rol_2` (`id_rol`);
+  ADD PRIMARY KEY (`usuario_id`),
+  ADD KEY `id_rol` (`rol_id`),
+  ADD KEY `id_rol_2` (`rol_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -164,37 +191,43 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `activo`
 --
 ALTER TABLE `activo`
-  MODIFY `id_activo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `activo_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `area`
 --
 ALTER TABLE `area`
-  MODIFY `id_area` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `area_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `categoria_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `piso`
+--
+ALTER TABLE `piso`
+  MODIFY `piso_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `posicion`
+--
+ALTER TABLE `posicion`
+  MODIFY `posicion_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
-  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `sector`
---
-ALTER TABLE `sector`
-  MODIFY `id_sector` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `rol_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `usuario_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
@@ -204,21 +237,22 @@ ALTER TABLE `usuario`
 -- Filtros para la tabla `activo`
 --
 ALTER TABLE `activo`
-  ADD CONSTRAINT `activo_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`),
-  ADD CONSTRAINT `activo_ibfk_2` FOREIGN KEY (`id_sector`) REFERENCES `sector` (`id_sector`),
-  ADD CONSTRAINT `activo_ibfk_3` FOREIGN KEY (`id_area`) REFERENCES `area` (`id_area`);
+  ADD CONSTRAINT `activo_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`categoria_id`),
+  ADD CONSTRAINT `activo_ibfk_2` FOREIGN KEY (`piso_id`) REFERENCES `piso` (`piso_id`),
+  ADD CONSTRAINT `activo_ibfk_3` FOREIGN KEY (`area_id`) REFERENCES `area` (`area_id`),
+  ADD CONSTRAINT `activo_ibfk_4` FOREIGN KEY (`posicion_id`) REFERENCES `posicion` (`posicion_id`);
 
 --
 -- Filtros para la tabla `area`
 --
 ALTER TABLE `area`
-  ADD CONSTRAINT `area_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
+  ADD CONSTRAINT `area_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`usuario_id`);
 
 --
 -- Filtros para la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
+  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `rol` (`rol_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
