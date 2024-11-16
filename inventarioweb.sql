@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-11-2024 a las 00:28:20
+-- Tiempo de generación: 16-11-2024 a las 01:37:04
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -109,6 +109,19 @@ INSERT INTO `rol` (`rol_id`, `rol_nombre`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `servicio`
+--
+
+CREATE TABLE `servicio` (
+  `servicio_id` int(11) NOT NULL,
+  `servicio_nombre` varchar(50) NOT NULL,
+  `piso_id` int(11) NOT NULL,
+  `posicion_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuario`
 --
 
@@ -176,6 +189,14 @@ ALTER TABLE `rol`
   ADD PRIMARY KEY (`rol_id`);
 
 --
+-- Indices de la tabla `servicio`
+--
+ALTER TABLE `servicio`
+  ADD PRIMARY KEY (`servicio_id`),
+  ADD KEY `piso_id` (`piso_id`),
+  ADD KEY `posicion_id` (`posicion_id`);
+
+--
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
@@ -224,6 +245,12 @@ ALTER TABLE `rol`
   MODIFY `rol_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de la tabla `servicio`
+--
+ALTER TABLE `servicio`
+  MODIFY `servicio_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
@@ -247,6 +274,13 @@ ALTER TABLE `activo`
 --
 ALTER TABLE `area`
   ADD CONSTRAINT `area_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`usuario_id`);
+
+--
+-- Filtros para la tabla `servicio`
+--
+ALTER TABLE `servicio`
+  ADD CONSTRAINT `servicio_ibfk_1` FOREIGN KEY (`piso_id`) REFERENCES `piso` (`piso_id`),
+  ADD CONSTRAINT `servicio_ibfk_2` FOREIGN KEY (`posicion_id`) REFERENCES `posicion` (`posicion_id`);
 
 --
 -- Filtros para la tabla `usuario`
